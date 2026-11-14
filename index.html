@@ -202,7 +202,7 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 <div id="toast" hidden></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycby64VT3vCXwTA5Fu-nAmMRzkqz2X8Rh8XsyBWdHCObGpqnsrV7alohFitI_qRr7nJ8/exec'; // URL Web App Apps Script (…/exec)
+const API = 'https://script.google.com/macros/s/AKfycbzGBWzkSO31MyOuOUeV-FJuJYVqn2TYGDlm3m0DuOyI58wODKee3U9hVX8pOy6F4MTu/exec'; // URL Web App Apps Script (…/exec)
 const $ = i => document.getElementById(i), R = n => 'Rp ' + Math.round(+n || 0).toLocaleString('id-ID');
 const E = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
 const L = (k, v) => { try { return v === undefined ? JSON.parse(localStorage.getItem(k)) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } };
