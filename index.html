@@ -788,6 +788,145 @@ th(); $('ap').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth()
 ['au', 'fpw', 'tu'].forEach(id => $(id).addEventListener('blur', () => { const d = $(id).value.replace(/\D/g, ''); if (d) $(id).value = fWa(d); }));
 if (S.tok) { const c = L('d'); if (c) { try { setD(c); } catch (e) { } } if (API.startsWith('GANTI')) sbar('URL Web App belum diisi di index.html (variabel API)'); S.q.length ? flush() : pull(); if (!c) { api('data').then(setD).catch(showAuth); } } else showAuth();
 </script>
+  <!-- ===== KASIRKU UPGRADE (tempel tepat sebelum </body>) ===== -->
+<style>
+body{letter-spacing:-.005em}
+header{backdrop-filter:blur(10px)}
+.c{border-radius:18px;box-shadow:0 1px 2px rgba(17,32,50,.04),0 6px 20px rgba(17,32,50,.06)}
+.b{background:linear-gradient(135deg,#0a7fe0,#0660b3);box-shadow:0 4px 12px rgba(7,112,205,.28)}
+.b.o{background:linear-gradient(135deg,#ff7a3d,#ff5e1f)}
+.tot{background:linear-gradient(135deg,var(--pt),transparent);border-radius:16px}
+.pc{border-radius:18px}.pc .av{box-shadow:inset 0 -10px 18px rgba(0,0,0,.14)}
+.kpi .c:nth-child(2){border-left-color:var(--ok)}.kpi .c:nth-child(3){border-left-color:var(--or)}.kpi .c:nth-child(4){border-left-color:var(--er)}
+.bd{letter-spacing:.02em}
+#cats{scrollbar-width:none;scroll-snap-type:x proximity}#cats::-webkit-scrollbar{display:none}.chip{scroll-snap-align:start}
+.pgrp{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--l)}.pgrp:last-child{border:0}
+#wr{width:100%;padding:13px;display:flex;justify-content:center;gap:8px;align-items:center}
+@media(max-width:900px){
+ .g{min-height:40px;padding:8px 14px;font-size:13px;border-radius:12px}
+ .i{min-height:50px;border-radius:14px}
+ .chip{padding:10px 18px;font-size:14px}
+ .pc{padding:12px;min-height:132px}.pc:active{background:var(--pt);border-color:var(--p)}
+ #cart .g{width:46px;height:46px;font-size:20px;padding:0}
+ #cp>button.b.o:last-child{position:sticky;bottom:max(8px,env(safe-area-inset-bottom));z-index:3;padding:17px;font-size:16px;box-shadow:0 -10px 24px rgba(0,0,0,.12),0 8px 20px rgba(255,94,31,.35)}
+ #fab{padding:17px 20px;font-size:16px;font-weight:700}
+ #nav button{min-height:52px}
+ .it{padding:12px}
+ .sh>div{max-height:94vh}
+ main{padding-bottom:170px}
+}
+</style>
+<script>
+/* ===== Getar ringan (haptic) ===== */
+const vib = p => { try { if (L('hp') !== false && navigator.vibrate) navigator.vibrate(p); } catch (e) { } };
+document.addEventListener('click', e => {
+  const x = e.target.closest('button,.pc,.bk,.chip'); if (!x) return;
+  vib(x.matches('.b.o,#fab') ? 18 : 8);
+}, true);
+(() => { const t0 = window.toast; window.toast = function (m, e) { vib(e === 2 ? [30, 40, 30] : e ? [70, 40, 70] : [14, 30, 14]); return t0(m, e); }; })();
+function tgh() { L('hp', L('hp') === false); hpUI(); vib(30); }
+function hpUI() { const s = $('hpl'); if (s) s.textContent = L('hp') === false ? 'Mati' : 'Nyala'; }
+(() => { const g = document.querySelector('button[onclick="enN()"]'); if (g && !$('hpl')) { g.insertAdjacentHTML('afterend', '<button class="g" onclick="tgh()">Getar: <span id="hpl"></span></button>'); hpUI(); } })();
+
+/* ===== Helper WhatsApp ===== */
+const tglID = s => { const d = new Date(String(s).replace(' ', 'T')); return isNaN(d) ? s : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); };
+const sapa = () => { const h = new Date().getHours(); return h < 11 ? 'pagi' : h < 15 ? 'siang' : h < 18 ? 'sore' : 'malam'; };
+const LN = '━━━━━━━━━━━━━━━━━━';
+const cwGet = n => (L('cw') || {})[n] || '';
+const waSend = (w, text) => open('https://wa.me/' + (w ? '62' + w.slice(1) : '') + '?text=' + encodeURIComponent(text), '_blank');
+const bayarInfo = () => {
+  const o = [], B = banks();
+  if (B.length) { o.push('*Transfer ke:*'); B.forEach(r => o.push('🏦 ' + r.b + ' ' + fmtRek(r.no) + (r.an ? '\n     a.n. ' + r.an : ''))); }
+  if (st().qris) o.push('📱 *QRIS:* ' + st().qris);
+  return o.join('\n');
+};
+
+/* ===== Struk WA profesional ===== */
+function wa(id) {
+  const t = D().tx.find(x => x.id === id); if (!t) return; const c = t.c || {}, hut = t.metode === 'Hutang';
+  const m = ['🧾 *' + toko() + '*'];
+  if (st().alamat) m.push(st().alamat); if (st().telp) m.push('Telp. ' + st().telp);
+  m.push(LN, '*STRUK PEMBELIAN*', 'No.  : ' + t.id, 'Tgl  : ' + tglID(t.tgl) + ' ' + t.tgl.slice(11, 16), LN);
+  t.it.forEach(i => m.push('• ' + i.nama, '   ' + i.qty + ' × ' + R(i.harga) + ' = *' + R(i.qty * i.harga) + '*'));
+  m.push(LN, 'Subtotal : ' + R(c.sub ?? t.total));
+  if (c.dis) m.push('Diskon   : −' + R(c.dis)); if (c.pjk) m.push('Pajak    : ' + R(c.pjk));
+  m.push('*TOTAL    : ' + R(t.total) + '*', 'Bayar    : ' + mlabel(t) + ' ' + R(t.bayar));
+  m.push(hut ? '*Sisa hutang: ' + R(t.total - t.bayar) + '*' : 'Kembali  : ' + R(Math.max(t.bayar - t.total, 0)));
+  if (t.metode === 'Transfer' && c.bank) m.push('Rekening : ' + rkTxt(t).replace(/\n/g, ', '));
+  m.push(LN, st().footer || 'Terima kasih atas kunjungan Anda 🙏');
+  waSend(cwGet(t.pelanggan), m.join('\n'));
+}
+
+/* ===== Tagihan WA profesional (gabung semua nota per pelanggan) ===== */
+function piutang(nm) { return D().tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL' && t.metode === 'Hutang' && t.pelanggan === nm && t.total > t.bayar); }
+function tagih(id) {
+  const t0 = D().tx.find(x => x.id === id); if (!t0) return; const nm = t0.pelanggan, L2 = piutang(nm);
+  if (!L2.length) return toast('Tidak ada tagihan untuk ' + nm, 2);
+  const inp = prompt('No. WhatsApp ' + nm + ' (kosongkan untuk pilih kontak sendiri):', fWa(cwGet(nm))); if (inp === null) return;
+  const w = normWa(inp); if (inp.trim() && !okWa(w)) return toast('No. WA tidak valid — pakai format 08', 1);
+  if (w) { const mp = L('cw') || {}; mp[nm] = w; L('cw', mp); }
+  const sisa = t => t.total - t.bayar, tot = L2.reduce((a, t) => a + sisa(t), 0);
+  const old = Math.max(...L2.map(t => Math.floor((Date.now() - new Date(t.tgl.replace(' ', 'T'))) / 864e5)));
+  const m = ['📄 *TAGIHAN PEMBAYARAN*', '*' + toko() + '*'];
+  if (st().alamat) m.push(st().alamat); if (st().telp) m.push('Telp. ' + st().telp);
+  m.push(LN, 'Selamat ' + sapa() + ', Bapak/Ibu *' + nm + '* 🙏', '',
+    old >= 14 ? 'Kami mengingatkan bahwa terdapat tagihan yang telah berjalan ' + old + ' hari dan belum terselesaikan:' : 'Berikut kami sampaikan rincian tagihan Anda:', '');
+  L2.forEach((t, i) => {
+    m.push('*' + (i + 1) + '. ' + t.id + '* · ' + tglID(t.tgl));
+    t.it.forEach(x => m.push('   • ' + x.qty + '× ' + x.nama + ' — ' + R(x.qty * x.harga)));
+    if (t.bayar > 0) m.push('   Total ' + R(t.total) + ' · Dibayar ' + R(t.bayar));
+    m.push('   Sisa: *' + R(sisa(t)) + '*', '');
+  });
+  m.push(LN, '*TOTAL TAGIHAN: ' + R(tot) + '*', LN, '', 'Pembayaran dapat dilakukan melalui:', '💵 Tunai di toko');
+  const bi = bayarInfo(); if (bi) m.push(bi);
+  m.push('', 'Mohon kirim bukti pembayaran ke nomor ini setelah transfer. Abaikan pesan ini bila sudah membayar.', '', 'Terima kasih atas kepercayaan Anda 🙏', '*' + toko() + '*');
+  waSend(w, m.join('\n'));
+}
+
+/* ===== Ringkasan harian via WA ===== */
+function waRingkas() {
+  const td = today(), T = D().tx.filter(t => t.status !== 'VOID' && t.tgl.slice(0, 10) === td), J = T.filter(t => t.tipe === 'JUAL'), K = T.filter(t => t.tipe === 'KELUAR'), tp = {};
+  const pk = t => +(t.c || {}).pjk || 0, om = J.reduce((a, t) => a + t.total - pk(t), 0), hpp = J.reduce((a, t) => a + t.it.reduce((b, i) => b + i.qty * (i.modal || 0), 0), 0), kl = K.reduce((a, t) => a + t.total, 0);
+  J.forEach(t => t.it.forEach(i => tp[i.nama] = (tp[i.nama] || 0) + i.qty));
+  const mn = +st().stokMin || 5, low = D().produk.filter(p => p.stok <= mn), hut = D().tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL' && t.metode === 'Hutang').reduce((a, t) => a + t.total - t.bayar, 0);
+  const m = ['📊 *LAPORAN HARIAN*', '*' + toko() + '*', tglID(td), LN, '💰 Omzet        : *' + R(om) + '*', '📈 Laba kotor  : ' + R(om - hpp), '💸 Pengeluaran : ' + R(kl), '✅ *Laba bersih : ' + R(om - hpp - kl) + '*', '🧾 Transaksi   : ' + J.length, LN];
+  const top = Object.entries(tp).sort((a, b) => b[1] - a[1]).slice(0, 3); if (top.length) { m.push('*Terlaris*'); top.forEach((e, i) => m.push((i + 1) + '. ' + e[0] + ' (' + e[1] + ')')); m.push(''); }
+  if (low.length) m.push('⚠ *Stok menipis:* ' + low.slice(0, 8).map(p => p.nama + ' (' + p.stok + ')').join(', '), '');
+  if (hut) m.push('📌 Total piutang: *' + R(hut) + '*');
+  waSend('', m.join('\n'));
+}
+
+/* ===== Kasir: uang cepat cerdas + tombol bayar menampilkan total ===== */
+(() => {
+  const s0 = window.sum;
+  window.sum = function () {
+    s0(); const c = calc(), o = new Set([c.tot]);
+    [5e3, 1e4, 2e4, 5e4, 1e5].forEach(u => o.add(Math.ceil(c.tot / u) * u));
+    $('qk').innerHTML = [...o].filter(v => v > 0).sort((a, b) => a - b).slice(0, 5).map(v => `<button class="g" onclick="sv('by',${v});sum()">${v === c.tot ? 'Pas' : R(v).replace('Rp ', '')}</button>`).join('');
+    const pb = document.querySelector('#cp>button.b.o'); if (pb) pb.textContent = c.tot ? 'Bayar ' + R(c.tot) + ' & cetak struk' : 'Bayar & cetak struk';
+  };
+})();
+
+/* ===== Dekorasi: tombol Tagih, piutang per pelanggan, tombol laporan WA ===== */
+const addTagih = root => root && root.querySelectorAll('button[onclick*="bayar("]').forEach(b => {
+  const m = b.getAttribute('onclick').match(/bayar\('([^']+)'/); if (m) b.insertAdjacentHTML('beforebegin', `<button class="g" style="color:#0f9d6b" onclick="tagih('${m[1]}')">Tagih</button>`);
+});
+const deco = (n, f) => { const o = window[n]; window[n] = function () { const r = o.apply(this, arguments); try { f(); } catch (e) { } return r; }; };
+deco('rHist', () => addTagih($('hist')));
+deco('op', () => addTagih($('nl')));
+deco('rHome', () => {
+  if (!S.d || !own() || S.tab !== 'home') return; addTagih($('ha'));
+  if (!$('wr')) $('v-home').insertAdjacentHTML('afterbegin', '<button id="wr" class="b" onclick="waRingkas()">📊 Kirim ringkasan hari ini ke WhatsApp</button>');
+});
+deco('rLap', () => {
+  if (!own() || S.tab !== 'laporan') return; const G = {};
+  D().tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL' && t.metode === 'Hutang' && t.total > t.bayar).forEach(t => { (G[t.pelanggan] = G[t.pelanggan] || []).push(t); });
+  $('hut').innerHTML = Object.entries(G).map(([n, a]) => `<div class="pgrp"><div><b>${E(n)}</b><div class="s m">${a.length} nota · sisa <b style="color:var(--er)">${R(a.reduce((x, t) => x + t.total - t.bayar, 0))}</b></div></div><span class="r"><button class="g" style="color:#0f9d6b" onclick="tagih('${a[0].id}')">Tagih</button><button class="g" onclick="bayar('${a[0].id}')">Bayar</button></span></div>`).join('') || '<span class="m">Tidak ada piutang</span>';
+});
+try { all(); hpUI(); } catch (e) { }
+</script>
+<!-- ===== END KASIRKU UPGRADE ===== -->
 </body>
 </html>
+
 
