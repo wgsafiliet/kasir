@@ -2,7 +2,7 @@
   "id": "./",
   "name": "KasirKu POS",
   "short_name": "KasirKu",
-  "description": "Aplikasi kasir (POS) untuk toko",
+  "description": "Aplikasi kasir (POS) untuk toko — login pakai No. WhatsApp",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
