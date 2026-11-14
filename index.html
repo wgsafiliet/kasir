@@ -95,10 +95,12 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 <div id="auth" hidden><div class="c col" style="width:100%;max-width:360px;padding:24px">
  <div class="sf" style="font-size:28px;color:var(--p);letter-spacing:.02em">KasirKu</div>
  <p id="as" class="m">Masuk ke toko Anda</p>
+ <button id="pwb" class="b" style="background:var(--ok);display:flex;gap:8px;align-items:center;justify-content:center" onclick="pwaInstall()"><svg class="ic" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Instal Aplikasi</button>
  <input id="at" class="i" placeholder="Nama toko" hidden>
- <input id="au" class="i" placeholder="Username" autocomplete="username">
+ <input id="au" class="i" inputmode="tel" placeholder="No. WhatsApp (mis. 0812-3456-7890)" autocomplete="tel" enterkeyhint="next" onkeydown="if(event.key==='Enter')$('ap').focus()">
  <div class="pww"><input id="ap" type="password" class="i" placeholder="Sandi" autocomplete="current-password"><button type="button" class="eye" onclick="pwTg('ap',this)" title="Lihat sandi" aria-label="Lihat sandi"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
  <button id="ab" class="b o" onclick="doAuth()">Masuk</button>
+ <button class="g" onclick="forgot()">Lupa sandi?</button>
  <button class="g" onclick="swAuth()" id="aw">Belum punya toko? Daftar gratis</button>
 </div></div>
 
@@ -162,7 +164,9 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
     <input id="sf" class="i" placeholder="Teks bawah struk"><button class="b" onclick="saveSet()">Simpan pengaturan</button></div>
    <div class="c col"><b>Tampilan &amp; notifikasi</b><div class="r w"><button class="g" onclick="dark()">Terang / Gelap</button><button class="g" onclick="enN()">Notifikasi stok</button><button class="g" onclick="tgp()">Auto-cetak struk: <span id="apl"></span></button><input type="color" id="ac" onchange="L('ac2',this.value);th()"></div></div>
    <div class="c col"><b>Ganti sandi</b><div class="r w"><input id="c0" type="password" class="i f" placeholder="Sandi lama"><input id="c1" type="password" class="i f" placeholder="Sandi baru"><button class="b" onclick="chPass()">Ganti</button></div></div>
-   <div class="c col own"><b>Akun kasir</b><div class="r w"><input id="tu" class="i f" placeholder="Username"><input id="tp" type="password" class="i f" placeholder="Sandi (min 6)"><button class="b" onclick="addU()">Tambah</button></div><div id="ul" class="col"></div></div>
+   <div class="c col own"><b>Akun kasir</b>
+    <div class="rknote"><span>ℹ</span><span>Kasir masuk dengan <b>No. WhatsApp</b> mereka. Jika kasir lupa sandi, tekan <b>Reset sandi</b> — pemilik tidak perlu tahu sandi lamanya.</span></div>
+    <div class="r w"><input id="tu" class="i f" inputmode="tel" placeholder="No. WA kasir (mis. 0812-3456-7890)" autocomplete="off"><input id="tp" type="password" class="i f" placeholder="Sandi awal (min 6)"><button class="b" onclick="addU()">Tambah</button></div><div id="ul" class="col"></div></div>
    <button class="g" style="padding:14px;color:var(--er)" onclick="out()">Keluar dari akun</button>
   </section>
  </main>
@@ -180,6 +184,21 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 <button class="b o" style="padding:14px" onclick="saveP()">Simpan produk</button><button id="pb2" class="g" style="padding:13px" onclick="saveP(1)">Simpan &amp; tambah lagi</button>
 </div></div></div>
 <div id="shn" class="sh" onclick="if(event.target===this)cs()"><div><div class="gr"></div><div class="r jb"><b style="font-size:18px">Notifikasi</b><button class="g" onclick="cs()">Tutup</button></div><div id="nl" style="margin-top:8px"></div><button id="ntb" class="b" style="margin-top:14px;width:100%" onclick="enN()">Aktifkan notifikasi perangkat</button></div></div>
+<div id="shw" class="sh" onclick="if(event.target===this)cs()"><div><div class="gr"></div><div class="r jb"><b style="font-size:18px">Pasang aplikasi di HP</b><button class="g" onclick="cs()">Tutup</button></div>
+<div class="col" style="margin-top:12px">
+ <div class="rke"><span class="avb" style="background:#0f9d6b">AND</span><div><b>Android (Chrome)</b><div class="s m">Ketuk menu <b>⋮</b> di pojok kanan atas → <b>Instal aplikasi</b> / <b>Tambahkan ke layar utama</b>.</div></div></div>
+ <div class="rke"><span class="avb" style="background:#0072bc">iOS</span><div><b>iPhone / iPad (Safari)</b><div class="s m">Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas) → <b>Tambah ke Layar Utama</b>.</div></div></div>
+ <div class="rknote"><span>ℹ</span><span>Aplikasi harus dibuka lewat alamat <b>https://</b> (mis. GitHub Pages / hosting) agar tombol pasang aktif. Setelah terpasang, KasirKu terbuka layar penuh seperti aplikasi biasa dan tetap bisa dipakai saat sinyal hilang.</span></div>
+</div></div></div>
+<div id="shf" class="sh" onclick="if(event.target===this)cs()"><div><div class="gr"></div><div class="r jb"><b style="font-size:18px">Lupa sandi</b><button class="g" onclick="cs()">Tutup</button></div>
+<div class="col" style="margin-top:12px">
+ <div class="rknote"><span>🔒</span><span>Hanya <b>pemilik aplikasi</b> yang mengetahui <b>Kunci Pemilik</b> (disimpan rahasia di Apps Script, tidak di HP siapa pun). Dengan kunci itu, sandi akun mana pun bisa direset. <b>Kasir</b> yang lupa sandi: minta pemilik toko mereset lewat menu <b>Setelan → Akun kasir → Reset sandi</b>.</span></div>
+ <div class="lb">No. WhatsApp akun</div><input id="fpw" class="i" inputmode="tel" placeholder="0812-3456-7890" autocomplete="off">
+ <div class="lb">Kunci Pemilik</div>
+ <div class="pww"><input id="fpk" type="password" class="i" placeholder="Kunci rahasia pemilik aplikasi" autocomplete="off"><button type="button" class="eye" onclick="pwTg('fpk',this)" title="Lihat kunci" aria-label="Lihat kunci"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+ <div class="r"><div class="f col"><div class="lb">Sandi baru</div><input id="fpn" type="password" class="i" placeholder="Min. 6 karakter"></div><div class="f col"><div class="lb">Ulangi sandi baru</div><input id="fpn2" type="password" class="i"></div></div>
+ <button class="b o" style="padding:14px" onclick="doForgot()">Reset sandi sekarang</button>
+</div></div></div>
 <div id="toast" hidden></div>
 
 <script>
@@ -194,6 +213,11 @@ const nv = id => +String($(id).value).replace(/\D/g, '') || 0;
 const sv = (i, v) => { $(i).value = $(i).classList.contains('rp') ? (v ? (+v).toLocaleString('id-ID') : '') : (v ?? ''); };
 document.addEventListener('input', e => { const t = e.target; if (t.classList.contains('rp')) { const n = t.value.replace(/\D/g, ''); t.value = n ? (+n).toLocaleString('id-ID') : ''; if (t.id === 'ph' || t.id === 'pm') mg(); } });
 const pj = x => { try { return JSON.parse(x) || {}; } catch (e) { return {}; } };
+
+/* ===== No. WhatsApp: normalisasi & tampilan ===== */
+const normWa = s => { let d = String(s || '').replace(/\D/g, ''); if (d.startsWith('62')) d = '0' + d.slice(2); if (/^8\d{8,13}$/.test(d)) d = '0' + d; return d; };
+const okWa = d => /^08\d{8,12}$/.test(d);
+const fWa = d => { const s = String(d || '').replace(/\D/g, ''); return s.length > 8 ? s.slice(0, 4) + '-' + s.slice(4, 8) + '-' + s.slice(8, 12) + (s.length > 12 ? '-' + s.slice(12, 15) : '') : s; };
 
 function toast(m, e) { const t = $('toast'); t.textContent = m; t.style.background = e === 2 ? '#e8780a' : e ? '#d93b3b' : '#0f9d6b'; t.hidden = 0; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = 1, 2800); }
 async function api(action, b = {}) {
@@ -239,16 +263,35 @@ const EYE_OFF = '<svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6
 function pwTg(id, b) { const i = $(id), show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.innerHTML = show ? EYE_OFF : EYE_ON; b.title = show ? 'Sembunyikan sandi' : 'Lihat sandi'; i.focus(); try { i.setSelectionRange(i.value.length, i.value.length); } catch (e) { } }
 
 /* ===== Auth ===== */
-function showAuth() { L('tok', null); L('d', null); S.tok = null; $('app').hidden = 1; $('auth').hidden = 0; }
+function showAuth() { L('tok', null); L('d', null); S.tok = null; $('app').hidden = 1; $('auth').hidden = 0; updPwb(); const lwa = L('lwa'); if (lwa && !$('au').value) $('au').value = fWa(lwa); }
 function swAuth() { S.reg = !S.reg; $('at').hidden = !S.reg; $('ab').textContent = S.reg ? 'Buat toko' : 'Masuk'; $('as').textContent = S.reg ? 'Daftarkan toko baru' : 'Masuk ke toko Anda'; $('aw').textContent = S.reg ? 'Sudah punya akun? Masuk' : 'Belum punya toko? Daftar gratis'; }
-function doAuth() { run(async () => { const j = await api(S.reg ? 'register' : 'login', { username: $('au').value, password: $('ap').value, toko: $('at').value, token: undefined }); S.tok = j.token; L('tok', j.token); $('ap').value = ''; setD(j); flush(); }); }
+function doAuth() { run(async () => {
+  const w = normWa($('au').value);
+  if (!okWa(w)) return toast('No. WA tidak valid — pakai format 08, mis. 081234567890', 1);
+  if (S.reg && !$('at').value.trim()) return toast('Nama toko wajib diisi', 1);
+  const reg = S.reg;
+  const j = await api(reg ? 'register' : 'login', { no_wa: w, password: $('ap').value, toko: $('at').value, token: undefined });
+  L('lwa', w); S.tok = j.token; L('tok', j.token); $('ap').value = ''; setD(j); flush();
+  if (reg) setTimeout(() => toast('Toko terdaftar! Atur "Kunci Pemilik" di Apps Script (lihat panduan) agar bisa reset sandi saat lupa.', 2), 1200);
+}); }
+function forgot() { $('shf').classList.add('o'); }
+function doForgot() { run(async () => {
+  const w = normWa($('fpw').value); if (!okWa(w)) return toast('No. WA tidak valid — pakai format 08', 1);
+  const k = $('fpk').value.trim(); if (!k) return toast('Isi Kunci Pemilik', 1);
+  const n = $('fpn').value; if (n.length < 6) return toast('Sandi baru minimal 6 karakter', 1);
+  if (n !== $('fpn2').value) return toast('Ulangi sandi tidak sama', 1);
+  const j = await api('forgotPass', { wa: w, kunci: k, baru: n, token: undefined });
+  cs(); $('fpk').value = $('fpn').value = $('fpn2').value = '';
+  $('au').value = fWa(w); $('ap').value = ''; $('ap').focus();
+  toast('Sandi ' + (j.role === 'owner' ? 'owner' : 'akun kasir') + ' berhasil direset — silakan masuk');
+}); }
 function out() { if (!confirm('Keluar? Perubahan yang belum terkirim: ' + S.q.length)) return; api('logout').catch(() => { }); L('q', null); showAuth(); location.reload(); }
 
 /* ===== Data ===== */
 function setD(j) {
   j.tx.forEach(t => { try { t.it = JSON.parse(t.items || '[]'); } catch (e) { t.it = []; } t.c = pj(t.catatan); });
   S.d = j; L('d', j); $('auth').hidden = 1; $('app').hidden = 0;
-  $('tt').textContent = st().nama || j.toko; $('lg').textContent = (st().nama || j.toko || 'K')[0].toUpperCase(); $('uu').textContent = j.user.username + ' · ' + (own() ? 'Owner' : 'Kasir');
+  $('tt').textContent = st().nama || j.toko; $('lg').textContent = (st().nama || j.toko || 'K')[0].toUpperCase(); $('uu').textContent = fWa(j.user.wa) + ' · ' + (own() ? 'Owner' : 'Kasir');
   nav(); all(); if (!S.sn) { S.sn = 1; setTimeout(sumN, 1500); }
 }
 function all() { grid(); cartUI(); rHist(); rProd(); rLap(); rSet(); rHome(); bell(); }
@@ -322,7 +365,7 @@ function pay() {
   const bank = m === 'Transfer' ? (S.bk || '') : '';
   const dp = m === 'Hutang' ? Math.min(nv('dp') || 0, c.tot) : c.tot;
   const pre = Object.fromEntries(ids.map(id => [id, D().produk.find(x => x.id === id).stok])); const it = ids.map(id => { const p = D().produk.find(x => x.id === id), q = S.cart[id]; p.stok -= q; return { id, nama: p.nama, qty: q, harga: p.harga, modal: p.modal }; });
-  const t = { id: uid('TRX-'), tgl: new Date().toLocaleString('sv-SE'), tipe: 'JUAL', it, items: JSON.stringify(it), total: c.tot, bayar: m === 'Cash' ? by : dp, metode: m, pelanggan: pel, c: { sub: c.sub, dis: c.dis, pjk: c.pjk, bank }, kasir: D().user.username, status: 'OK' };
+  const t = { id: uid('TRX-'), tgl: new Date().toLocaleString('sv-SE'), tipe: 'JUAL', it, items: JSON.stringify(it), total: c.tot, bayar: m === 'Cash' ? by : dp, metode: m, pelanggan: pel, c: { sub: c.sub, dis: c.dis, pjk: c.pjk, bank }, kasir: D().user.wa, status: 'OK' };
   t.catatan = JSON.stringify(t.c); D().tx.unshift(t);
   S.cart = {}; S.bk = ''; S.bi = -1; ['by', 'dv', 'pl', 'dp'].forEach(i => $(i).value = ''); cp(0); all();
   push({ a: 'tx', t: { id: t.id, tgl: t.tgl, items: ids.map(id => ({ id, qty: it.find(x => x.id === id).qty })), dis: c.dis, metode: m, bayar: dp, pel, bank } });
@@ -376,7 +419,7 @@ function sLines(t) {
   Rw('Subtotal', R(c.sub ?? t.total)); if (c.dis) Rw('Diskon', '-' + R(c.dis)); if (c.pjk) Rw('Pajak', R(c.pjk));
   Rw('TOTAL', R(t.total), 1); Rw(t.metode, R(t.bayar));
   t.metode === 'Hutang' ? Rw('Sisa hutang', R(t.total - t.bayar)) : Rw('Kembali', R(Math.max(t.bayar - t.total, 0)));
-  H(); T('Kasir: ' + t.kasir); if (t.pelanggan) T('Pelanggan: ' + t.pelanggan);
+  H(); T('Kasir: ' + fWa(t.kasir)); if (t.pelanggan) T('Pelanggan: ' + t.pelanggan);
   if (t.metode === 'Transfer' && s.rek) { H(); T('Transfer ke:'); rkTxt(t).split('\n').forEach(T); }
   H(); C(s.footer || 'Terima kasih'); return A;
 }
@@ -430,7 +473,7 @@ function rwModel() {
   return {
     title: 'Riwayat Transaksi', sub: rangeLbl(),
     tables: [{ t: 'Transaksi (' + T.length + ')', h: ['Waktu', 'ID', 'Rincian', 'Metode', 'Total', 'Kasir'], n: [4],
-      r: T.map(t => [t.tgl.slice(0, 16), t.id, t.tipe === 'JUAL' ? t.it.map(i => i.qty + 'x ' + i.nama).join(', ') : 'Keluar: ' + t.catatan, t.status === 'VOID' ? 'Batal' : mlabel(t), (t.tipe === 'JUAL' ? '' : '-') + R(t.total), t.kasir]) }]
+      r: T.map(t => [t.tgl.slice(0, 16), t.id, t.tipe === 'JUAL' ? t.it.map(i => i.qty + 'x ' + i.nama).join(', ') : 'Keluar: ' + t.catatan, t.status === 'VOID' ? 'Batal' : mlabel(t), (t.tipe === 'JUAL' ? '' : '-') + R(t.total), fWa(t.kasir)]) }]
   };
 }
 const DOCCSS = '@page{size:A4;margin:12mm}body{font:12px/1.4 Arial,sans-serif;color:#000;margin:0;padding:10px}h1{font-size:18px;margin:0}h2{font-size:13px;margin:14px 0 4px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:3px 5px;text-align:left;vertical-align:top}th{background:#e8f2fc}.n{text-align:right}.k{display:flex;gap:6px;flex-wrap:wrap}.k div{flex:1;min-width:90px;border:1px solid #999;padding:5px}';
@@ -502,7 +545,7 @@ function rHist() {
   const q = ($('hq').value || '').toLowerCase(), T = D().tx.filter(t => inR(t) && (!q || JSON.stringify([t.id, t.pelanggan, t.catatan, t.kasir, t.items]).toLowerCase().includes(q)));
   $('hist').innerHTML = T.slice(0, 300).map(t => {
     const v = t.status === 'VOID', j = t.tipe === 'JUAL', h = t.metode === 'Hutang' && !v;
-    return `<div class="it" style="display:block;${v ? 'opacity:.45' : ''}"><div class="r jb"><span class="s m">${E(t.tgl.slice(5, 16))} · ${E(t.kasir)}</span><b style="color:${j ? 'var(--or)' : 'var(--er)'};${v ? 'text-decoration:line-through' : ''}">${j ? '' : '−'}${R(t.total)}</b></div><div style="margin:5px 0">${j ? t.it.map(i => i.qty + '× ' + E(i.nama)).join(', ') : E(t.catatan)}</div><div class="r jb w"><span class="s">${h ? `<span class="bd w">Hutang</span> sisa ${R(t.total - t.bayar)}` : `<span class="bd">${v ? 'Batal' : E(mlabel(t))}</span>`}${t.pelanggan ? ' · ' + E(t.pelanggan) : ''}</span><span class="r">${j && !v ? `<button class="g" onclick="struk(D().tx.find(x=>x.id==='${t.id}'))">Struk</button><button class="g" onclick="wa('${t.id}')">WA</button>` : ''}${h ? `<button class="g" onclick="bayar('${t.id}')">Bayar</button>` : ''}${own() && !v ? `<button class="g" onclick="voidTx('${t.id}')">Batal</button>` : ''}</span></div></div>`;
+    return `<div class="it" style="display:block;${v ? 'opacity:.45' : ''}"><div class="r jb"><span class="s m">${E(t.tgl.slice(5, 16))} · ${E(fWa(t.kasir))}</span><b style="color:${j ? 'var(--or)' : 'var(--er)'};${v ? 'text-decoration:line-through' : ''}">${j ? '' : '−'}${R(t.total)}</b></div><div style="margin:5px 0">${j ? t.it.map(i => i.qty + '× ' + E(i.nama)).join(', ') : E(t.catatan)}</div><div class="r jb w"><span class="s">${h ? `<span class="bd w">Hutang</span> sisa ${R(t.total - t.bayar)}` : `<span class="bd">${v ? 'Batal' : E(mlabel(t))}</span>`}${t.pelanggan ? ' · ' + E(t.pelanggan) : ''}</span><span class="r">${j && !v ? `<button class="g" onclick="struk(D().tx.find(x=>x.id==='${t.id}'))">Struk</button><button class="g" onclick="wa('${t.id}')">WA</button>` : ''}${h ? `<button class="g" onclick="bayar('${t.id}')">Bayar</button>` : ''}${own() && !v ? `<button class="g" onclick="voidTx('${t.id}')">Batal</button>` : ''}</span></div></div>`;
   }).join('') || '<p class="m" style="text-align:center;padding:30px">Belum ada transaksi</p>';
 }
 function voidTx(id) {
@@ -520,7 +563,7 @@ function wa(id) {
   open('https://wa.me/?text=' + encodeURIComponent(`*${s.nama || D().toko}*\n${t.tgl}\n${t.id}\n\n` + t.it.map(i => `${i.qty}x ${i.nama} = ${R(i.qty * i.harga)}`).join('\n') + `\n\n*Total ${R(t.total)}* (${t.metode})\n${s.footer || 'Terima kasih'}`), '_blank');
 }
 function csv() {
-  const Ls = [['Waktu', 'ID', 'Tipe', 'Rincian', 'Total', 'Metode', 'Pelanggan', 'Kasir', 'Status']].concat(D().tx.filter(inR).map(t => [t.tgl, t.id, t.tipe, t.tipe === 'JUAL' ? t.it.map(i => i.qty + 'x ' + i.nama).join('; ') : t.catatan, t.total, mlabel(t), t.pelanggan, t.kasir, t.status]));
+  const Ls = [['Waktu', 'ID', 'Tipe', 'Rincian', 'Total', 'Metode', 'Pelanggan', 'Kasir', 'Status']].concat(D().tx.filter(inR).map(t => [t.tgl, t.id, t.tipe, t.tipe === 'JUAL' ? t.it.map(i => i.qty + 'x ' + i.nama).join('; ') : t.catatan, t.total, mlabel(t), t.pelanggan, fWa(t.kasir), t.status]));
   const txt = '\ufeff' + Ls.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(',')).join('\n');
   saveFile(new Blob([txt], { type: 'text/csv' }), 'laporan-kasir-' + today() + '.csv');
 }
@@ -595,7 +638,7 @@ function rHome() {
 }
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => { });
 
-/* ===== PWA: tombol pasang aplikasi ===== */
+/* ===== PWA: tombol pasang aplikasi (login & setelan) ===== */
 let ipr;
 function pwaCard() {
   const c = $('pwa'); if (STANDALONE) { c.hidden = 1; return; } c.hidden = 0;
@@ -605,9 +648,15 @@ function pwaCard() {
       : '<p class="s">Buka menu browser (⋮) lalu pilih <b>Instal aplikasi</b> / <b>Tambahkan ke layar utama</b>. (Perlu dibuka lewat HTTPS.)</p>');
   if (ipr) $('pwi').onclick = async () => { ipr.prompt(); await ipr.userChoice; ipr = null; pwaCard(); };
 }
-addEventListener('beforeinstallprompt', e => { e.preventDefault(); ipr = e; pwaCard(); toast('KasirKu bisa dipasang: Setelan > Pasang aplikasi', 2); });
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); ipr = e; pwaCard(); updPwb(); toast('KasirKu siap dipasang: tekan tombol “Instal Aplikasi”', 2); });
 addEventListener('appinstalled', () => { ipr = null; pwaCard(); toast('Aplikasi terpasang'); });
-pwaCard();
+pwaCard(); updPwb();
+function pwaInstall() {
+  if (STANDALONE) return toast('Aplikasi sudah terpasang di perangkat ini');
+  if (ipr) { ipr.prompt(); ipr.userChoice.then(() => { ipr = null; pwaCard(); }); return; }
+  $('shw').classList.add('o'); // panduan instal manual (iOS / belum HTTPS)
+}
+function updPwb() { const b = $('pwb'); if (b) b.hidden = STANDALONE; }
 
 /* ===== Laporan ===== */
 function rLap() {
@@ -628,14 +677,14 @@ function rLap() {
 }
 function keluar() {
   const n = nv('ej'), k = $('ek').value.trim() || 'Pengeluaran'; if (!(n > 0)) return toast('Jumlah harus lebih dari 0', 1);
-  const id = uid('OUT-'); D().tx.unshift({ id, tgl: new Date().toLocaleString('sv-SE'), tipe: 'KELUAR', it: [], items: '[]', c: {}, total: n, bayar: n, metode: 'Cash', pelanggan: '', catatan: k, kasir: D().user.username, status: 'OK' });
+  const id = uid('OUT-'); D().tx.unshift({ id, tgl: new Date().toLocaleString('sv-SE'), tipe: 'KELUAR', it: [], items: '[]', c: {}, total: n, bayar: n, metode: 'Cash', pelanggan: '', catatan: k, kasir: D().user.wa, status: 'OK' });
   $('ek').value = $('ej').value = ''; all(); push({ a: 'ex', id, k, n }); toast('Pengeluaran dicatat');
 }
 
 /* ===== Setelan ===== */
 // FIX: form Setelan tidak lagi tertimpa data server (tiap 60 dtk / tiap transaksi) saat sedang diubah (S.sd = ada perubahan belum disimpan)
 function rSet() {
-  const s = st(); $('ul').innerHTML = (D().users || []).map(u => `<div class="r jb"><span>${E(u.username)} · ${u.role === 'owner' ? 'Owner' : 'Kasir'}</span>${u.role === 'owner' ? '' : `<button class="g" onclick="delU('${E(u.username)}')">Hapus</button>`}</div>`).join('');
+  const s = st(); $('ul').innerHTML = (D().users || []).map(u => `<div class="r jb"><span class="k">${E(fWa(u.wa))} <span class="s m">· ${u.role === 'owner' ? 'Owner' : 'Kasir'}</span></span>${u.role === 'owner' ? '' : `<span class="r"><button class="g" onclick="rpU('${u.wa}')">Reset sandi</button><button class="g" style="color:var(--er)" onclick="delU('${u.wa}')">Hapus</button></span>`}</div>`).join('') || '<p class="m s">Belum ada akun kasir. Tambahkan lewat form di atas.</p>';
   rQ(); if (S.sd) return;
   $('sn').value = s.nama || D().toko; $('st').value = s.telp || ''; $('sa').value = s.alamat || ''; $('sp').value = s.pajak || ''; $('sm2').value = s.stokMin || ''; $('sk').value = s.kertas || '58'; $('sr').value = s.rek || ''; $('sf').value = s.footer || '';
   RK = parseRek(s.rek); rRek();
@@ -677,14 +726,20 @@ function delQ() {
 }
 
 const one = op => api('sync', { ops: [op] }).then(r => { if (r.err && r.err.length) throw new Error(r.err[0]); return api('data'); }).then(setD);
-function addU() { run(async () => { await one({ a: 'au', u: $('tu').value, p: $('tp').value }); $('tu').value = $('tp').value = ''; toast('Akun kasir ditambahkan'); }); }
-function delU(u) { if (confirm('Hapus akun ' + u + '?')) run(async () => { await one({ a: 'du', u }); toast('Akun dihapus'); }); }
+function addU() { run(async () => {
+  const w = normWa($('tu').value); if (!okWa(w)) return toast('No. WA kasir tidak valid — pakai format 08, mis. 081234567890', 1);
+  if (($('tp').value || '').length < 6) return toast('Sandi minimal 6 karakter', 1);
+  await one({ a: 'au', wa: w, p: $('tp').value }); $('tu').value = $('tp').value = ''; toast('Akun kasir ditambahkan');
+}); }
+function delU(wa) { if (confirm('Hapus akun ' + fWa(wa) + '?')) run(async () => { await one({ a: 'du', wa }); toast('Akun dihapus'); }); }
+function rpU(wa) { const p = prompt('Sandi baru untuk ' + fWa(wa) + ' (min. 6 karakter):'); if (p === null) return; if (p.length < 6) return toast('Sandi minimal 6 karakter', 1); run(async () => { await one({ a: 'rp', wa, p }); toast('Sandi kasir berhasil direset'); }); }
 function chPass() { run(async () => { await api('changePass', { lama: $('c0').value, baru: $('c1').value }); $('c0').value = $('c1').value = ''; toast('Sandi diganti'); }); }
 function th() { const z = document.documentElement; z.toggleAttribute('data-d', !!L('dk')); const a = L('ac2'); a ? z.style.setProperty('--p', a) : z.style.removeProperty('--p'); }
 function dark() { L('dk', !L('dk')); th(); }
 
 /* ===== Mulai: tampil seketika dari cache, sinkron di latar ===== */
 th(); $('ap').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+['au', 'fpw', 'tu'].forEach(id => $(id).addEventListener('blur', () => { const d = $(id).value.replace(/\D/g, ''); if (d) $(id).value = fWa(d); }));
 if (S.tok) { const c = L('d'); if (c) { try { setD(c); } catch (e) { } } if (API.startsWith('GANTI')) sbar('URL Web App belum diisi di index.html (variabel API)'); S.q.length ? flush() : pull(); if (!c) { api('data').then(setD).catch(showAuth); } } else showAuth();
 </script>
 </body>
