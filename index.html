@@ -183,7 +183,7 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 <div id="toast" hidden></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbxHZWcpedBXa15muXu-9CqWOiEbYM4zYV-QzLBl3NDtU6V23HS_6FsgDLriw6Di-gLJ/exec'; // URL Web App Apps Script (…/exec)
+const API = 'https://script.google.com/macros/s/AKfycby64VT3vCXwTA5Fu-nAmMRzkqz2X8Rh8XsyBWdHCObGpqnsrV7alohFitI_qRr7nJ8/exec'; // URL Web App Apps Script (…/exec)
 const $ = i => document.getElementById(i), R = n => 'Rp ' + Math.round(+n || 0).toLocaleString('id-ID');
 const E = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
 const L = (k, v) => { try { return v === undefined ? JSON.parse(localStorage.getItem(k)) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } };
