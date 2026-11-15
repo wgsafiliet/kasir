@@ -233,7 +233,7 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
     <p class="s m">Cadangkan <b>semua data</b> — transaksi, produk &amp; stok, pengeluaran, akun, dan ringkasan omzet — ke satu spreadsheet Google Sheets. Setiap ekspor memperbarui spreadsheet yang sama, bukan membuat file baru.</p>
     <div id="exst" class="s"></div>
     <div class="r w"><button id="exb" class="b f" style="text-align:center;white-space:nowrap" onclick="expSheet()">Ekspor semua data</button><button id="exo" class="g f" style="display:none;text-align:center" onclick="exOpen()">Buka Spreadsheet</button></div>
-    <div class="rknote"><span>ℹ</span><span>Ekspor pertama membuat spreadsheet <b>KasirKu — [nama toko]</b> di Google Drive pemilik (sesuai akun Apps Script); ekspor berikutnya memperbaruinya. Perlu koneksi internet dan dapat memakan waktu beberapa detik.</span></div>
+    <div class="rknote"><span>ℹ</span><span id="exnote">Ekspor pertama membuat spreadsheet <b>KasirKu — [nama toko]</b>; ekspor berikutnya memperbaruinya. Perlu koneksi internet dan dapat memakan waktu beberapa detik.</span></div>
    </div>
    <div class="c col"><b>Ganti sandi</b><div class="r w"><input id="c0" type="password" class="i f" placeholder="Sandi lama"><input id="c1" type="password" class="i f" placeholder="Sandi baru"><button class="b" onclick="chPass()">Ganti</button></div></div>
    <div class="c col own"><b>Akun kasir</b>
@@ -277,7 +277,8 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 <div id="toast" hidden></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbxl_aA14yXQsFt7T60gAIKXoZwdEFaz8A668pMDnUolIHTPwSPsBtmH751BT8UzNYaD2Q/exec'; // URL Web App Apps Script (…/exec)
+const API = 'https://script.google.com/macros/s/AKfycbw447D8UFeEf8lCc5j1aJyUwQyF1p1l7QUZVYJBoLzDkAQy2BomPfu0dZSIT1tO66cyvg/exec'; // URL Web App Apps Script (…/exec)
+const APIEX = 'GANTI'; // URL /exec deployment ke-2 "Ekspor pribadi" (Execute as: User) -> hasil ekspor tersimpan di Google Drive akun pengguna SENDIRI. Biarkan 'GANTI' agar tersimpan di Drive pemilik (deployment utama).
 // Set hx-post form auth ke URL API supaya HTMX 2.x pakai URL absolut cross-origin tanpa invalidPath.
 // HTMX 2.x punya config selfRequestsOnly (true = blokir cross-origin). Karena API Apps Script
 // beda origin dengan host aplikasi, kita matikan restriksi ini supaya request bisa keluar.
@@ -1311,15 +1312,49 @@ deco('cartUI', fabHide); try { if (S.d) fabHide(); } catch (e) { }
 /* ===== Status ekspor terakhir (tampil di kartu Setelan) ===== */
 function exUI() {
   const u = L('shUrl'), t = L('shAt'), s = $('exst'); if (!s) return; const o = $('exo'); if (o) o.style.display = u ? '' : 'none';
+  const n = $('exnote');
+  if (n) n.innerHTML = exPribadi()
+    ? 'Hasil ekspor tersimpan di <b>Google Drive akun Google Anda sendiri</b> (bukan akun pemilik aplikasi). Saat PERTAMA kali Google meminta izin: pilih akun Anda &gt; <b>Allow</b> &gt; kembali ke aplikasi &gt; ketuk <b>Ekspor semua data</b> sekali lagi. Ekspor berikutnya langsung selesai.'
+    : 'Hasil ekspor saat ini disimpan di Google Drive <b>pemilik</b> (deployment utama). Agar tersimpan di Google Drive akun Anda sendiri: buat deployment kedua "Ekspor pribadi" (Execute as: User) sesuai catatan di Code.gs, lalu isi variabel <b>APIEX</b> di file ini.';
   s.innerHTML = u ? '<span class="bd">Terakhir diekspor: ' + E(t || '-') + '</span>' : '<span class="m">Belum pernah diekspor. Spreadsheet dibuat otomatis pada ekspor pertama.</span>';
 }
 function exOpen() { const u = L('shUrl'); if (u) open(u, '_blank'); else toast('Belum ada spreadsheet — jalankan ekspor dulu', 1); }
 
-/* ===== Ekspor: kirim semua data ke backend, ditulis ke Google Sheets ===== */
+/* ===== Ekspor semua data ke Google Sheets =====
+ * Mode PRIBADI (APIEX terisi): form POST ke deployment kedua "Ekspor pribadi"
+ * (Execute as: User) -> spreadsheet dibuat di Google Drive akun Google milik
+ * pengguna sendiri; halaman hasil mengirim URL balik ke aplikasi (postMessage).
+ * Mode LAMA (APIEX = 'GANTI'): fetch ke deployment utama -> tersimpan di
+ * Google Drive pemilik aplikasi. */
+const exPribadi = () => APIEX && !/^GANTI/i.test(String(APIEX).trim());
+
+/* Terima hasil ekspor dari tab yang dibuka eksporTab() */
+window.addEventListener('message', e => {
+  let d = e.data; if (typeof d === 'string') { try { d = JSON.parse(d); } catch (x) { return; } }
+  if (!d || d.kasirku !== 'ex') return;
+  if (d.ok) { L('shUrl', d.url); L('shAt', new Date().toLocaleString('id-ID')); exUI(); toast('Ekspor berhasil: ' + (d.nama || 'spreadsheet') + ' tersimpan di Google Drive Anda'); }
+  else toast(d.error || 'Ekspor gagal', 1);
+});
+
+/* Kirim payload lewat form POST di tab baru (bukan fetch) supaya Google bisa
+ * mengenali akun pengguna dan meminta izin sekali di awal */
+function eksporTab(data) {
+  const f = document.createElement('form');
+  f.method = 'POST'; f.action = APIEX; f.target = '_blank'; f.style.display = 'none';
+  const i = document.createElement('textarea');
+  i.name = 'post'; i.value = JSON.stringify({ action: 'exportSheet', token: S.tok, data: data });
+  f.appendChild(i); document.body.appendChild(f); f.submit();
+  setTimeout(() => f.remove(), 3000);
+  L('shAt', new Date().toLocaleString('id-ID')); exUI();
+  toast('Tab hasil ekspor terbuka. Saat pertama kali: pilih akun Google Anda > Allow > ketuk Ekspor lagi');
+}
+
 async function expSheet() {
   if (!own()) return toast('Hanya owner yang dapat mengekspor data', 1);
-  if (!confirm('Kirim semua data ke Google Sheets?\n\n- Transaksi, produk & stok, pengeluaran, akun, ringkasan\n- Spreadsheet yang sama akan diperbarui')) return;
-  const b = $('exb'); b.disabled = 1; b.dataset.l = b.textContent; b.textContent = 'Mengekspor…';
+  if (!confirm(exPribadi()
+    ? 'Kirim semua data ke Google Sheets?\n\n- Disimpan di Google Drive akun Google ANDA sendiri\n- Spreadsheet yang sama akan diperbarui'
+    : 'Kirim semua data ke Google Sheets?\n\n- Transaksi, produk & stok, pengeluaran, akun, ringkasan\n- Spreadsheet yang sama akan diperbarui')) return;
+  const b = $('exb'); b.disabled = 1; b.dataset.l = b.textContent; b.textContent = 'Mengekspor\u2026';
   try {
     const d = D(), s = st(), pk = t => +(t.c || {}).pjk || 0;
     const J = d.tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL'), K = d.tx.filter(t => t.status !== 'VOID' && t.tipe === 'KELUAR');
@@ -1348,6 +1383,7 @@ async function expSheet() {
       pengeluaran: [['Waktu', 'ID', 'Keterangan', 'Jumlah', 'Kasir', 'Status']].concat(K.map(t => [t.tgl, t.id, String(t.catatan || ''), +t.total || 0, fWa(t.kasir), t.status || 'OK'])),
       pengguna: [['No. WhatsApp', 'Peran']].concat((d.users || []).map(u => [fWa(u.wa), u.role === 'owner' ? 'Owner' : 'Kasir']))
     };
+    if (exPribadi()) { eksporTab(data); return; }
     const j = await api('exportSheet', { data });
     L('shUrl', j.url); L('shAt', now); exUI();
     toast('Ekspor berhasil: ' + (j.nama || 'spreadsheet') + ' siap dibuka');
