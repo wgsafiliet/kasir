@@ -155,7 +155,7 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
   <div class="col" style="gap:6px"><div class="lb" style="margin:0">Sandi</div><div class="pww"><input id="ap" type="password" class="i" placeholder="Minimal 6 karakter" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" class="eye" onclick="pwTg('ap',this)" title="Lihat sandi" aria-label="Lihat sandi"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
   <!-- Captcha anti-spam: hanya tampil saat Daftar -->
   <div id="capW" hidden class="col" style="gap:6px">
-    <div class="lb" style="margin:0">Verifikasi (anti-spam)</div>
+    <div class="lb" style="margin:0">Verifikasi</div>
     <div class="capw">
       <canvas id="capCv" width="260" height="96" title="Klik untuk refresh" onclick="genCaptcha()"></canvas>
       <input id="capIn" class="i" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="Ketik 5 huruf" maxlength="6">
@@ -1092,6 +1092,130 @@ deco('rLap', () => {
 });
 try { all(); hpUI(); } catch (e) { }
 </script>
-<!-- ===== END KASIRKU UPGRADE ===== -->
+<style>
+/* ---------- Dasar: cegah geser samping & teks terpotong ---------- */
+html,body{max-width:100%;overflow-x:hidden}
+.c,.it,.al,.pc,.bk,.rke,.tot,.rknote,.kpi>*,.col>*,.r>*{min-width:0}
+.c,.it,.al,.pc,.rknote,.rke,.bk .f,.kpi .c,.r.jb>*{overflow-wrap:anywhere;word-break:normal}
+.bd,.qb,.chip,.g,.b{flex:none}
+.bd{white-space:nowrap}
+.sh>div{overflow-x:hidden}
+#toast{width:max-content;max-width:calc(100vw - 28px);text-align:center;white-space:normal;line-height:1.4;font-size:14px}
+#sb{flex-wrap:wrap;line-height:1.4}
+
+/* ---------- Header: nama toko panjang jadi "…" ---------- */
+#hd{min-width:0}
+#tt,#uu{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+@media(max-width:900px){
+ /* header lebih ringkas + aman notch */
+ header{gap:10px;padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+ .lg{width:36px;height:36px;border-radius:11px;font-size:16px}
+ #tt{font-size:16px}
+ .bl{width:38px;height:38px}
+ main{padding:14px max(14px,env(safe-area-inset-left)) 170px max(14px,env(safe-area-inset-right))}
+
+ /* navigasi bawah rapi, label tidak meluber */
+ #nav button{min-width:0;padding:6px 2px;font-size:10.5px;line-height:1.1}
+ #nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+ /* grid: kolom tidak melebar karena teks panjang */
+ #grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .kpi b{font-size:clamp(15px,4.6vw,19px);line-height:1.25;overflow-wrap:anywhere}
+ .kpi .c{padding:12px 12px 12px 14px}
+
+ /* kartu produk: nama maks 2 baris */
+ .pc{display:flex;flex-direction:column;align-items:flex-start;min-height:0}
+ .pc .k:first-of-type,.pc>.k:nth-of-type(1){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;min-height:2.6em;width:100%}
+ .pc .k{overflow-wrap:anywhere}
+ .qb{right:8px;top:8px}
+
+ /* keranjang */
+ #cart .r{align-items:flex-start;gap:6px}
+ #cart .r>b{min-width:22px;text-align:center;align-self:center}
+ #cart .r>.g{align-self:center}
+ #mm .chip{padding:10px 4px;text-align:center;font-size:13px}
+ #qk{gap:6px}
+ .tot b{font-size:clamp(20px,6.5vw,24px)}
+ .tot{gap:10px}
+
+ /* daftar riwayat: info di atas, tombol aksi di bawah (rata, tidak meluber) */
+ .it .r.jb.w{flex-direction:column;align-items:stretch;gap:8px}
+ .it .r.jb.w>span.r{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+ .it .r.jb.w>span.r>.g{flex:1 1 64px;text-align:center}
+ .it .r.jb:first-child{align-items:flex-start}
+ .it .r.jb:first-child>b{flex:none;text-align:right}
+
+ /* daftar produk (owner) */
+ #pl2 .it{flex-wrap:wrap;align-items:flex-start}
+ #pl2 .it>.f{flex:1 1 150px}
+ #pl2 .it>.col{width:100%;flex-direction:row;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--l);padding-top:10px}
+ #pl2 .it>.col .r{gap:6px}
+
+ /* baris label + nilai di laporan/beranda/notifikasi */
+ .c .r.jb{align-items:flex-start;gap:10px}
+ .c .r.jb>b{flex:none;text-align:right;max-width:55%}
+ .al{align-items:flex-start}
+ .al>.f{flex:1 1 0}
+
+ /* bar pencarian + filter riwayat/laporan */
+ #v-riwayat>.r.w>.rg,#v-laporan>.r.w>.rg{max-width:none!important;flex:1 1 100%}
+ #v-riwayat>.r.w>.f{flex:1 1 100%}
+ #v-riwayat>.r.w>.g,#v-laporan>.r.w>.g,#v-laporan>.r.w>.b{flex:1 1 90px;text-align:center}
+
+ /* laporan: kartu penuh lebar, bukan dipaksa 230px */
+ #v-laporan .r.w>.c.f{flex:1 1 100%;min-width:0!important}
+ .bars{height:150px}
+
+ /* Setelan & form: input TIDAK lagi berdesakan satu baris */
+ #v-set .r.w>.i,#v-set .r.w>select.i{flex:1 1 100%;min-width:0;width:100%}
+ #v-set .r.w>.b{flex:1 1 100%}
+ #v-set .r.w>.g{flex:1 1 130px;text-align:center}
+ #v-set .r.w>input[type=color]{flex:none;width:48px;height:40px;padding:2px;border-radius:10px}
+ #v-set .r.jb{gap:10px;align-items:flex-start}
+ #v-set .r.jb>.r{flex-wrap:wrap;justify-content:flex-end}
+ #v-set .own .r.jb>.k{min-width:0;overflow-wrap:anywhere}
+
+ /* editor rekening & pilihan rekening transfer */
+ .rke{flex-wrap:wrap}
+ .rke>.f{flex:1 1 180px}
+ .rke>.g{margin-left:auto}
+ .bk{gap:10px;padding:12px}
+ .bk .bn{font-size:14.5px;letter-spacing:.03em}
+ .bk .av{width:42px!important;height:42px!important;font-size:11px!important}
+
+ /* bottom sheet (produk, notifikasi, dll) */
+ .sh>div{max-height:92dvh;padding-left:16px;padding-right:16px}
+ .stp button{width:42px;height:46px}
+ .stp .i{min-width:0;padding-left:6px;padding-right:6px}
+
+ /* tombol bayar menempel & nominal besar tidak terpotong */
+ #fab{gap:10px}
+ #fab span{white-space:nowrap}
+ #cp>button.b.o:last-child{font-size:15.5px;line-height:1.3}
+
+ /* pratinjau struk/laporan */
+ #pv .tb{gap:6px}
+ #pv .tb>b{flex:1 1 100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #pv .tb .r{width:100%}
+ #pv .tb .r>*{flex:1;text-align:center}
+
+ /* halaman login */
+ #auth{padding:16px}
+ .ac{padding:24px 18px 16px}
+ .capw{gap:8px}
+ #capCv{width:112px}
+}
+
+/* layar sangat kecil (≤360px) */
+@media(max-width:360px){
+ body{font-size:14px}
+ #grid{gap:8px}
+ .pc{padding:10px}
+ .av{width:38px;height:38px;font-size:16px}
+ #capCv{width:100px}
+}
+</style>
 </body>
 </html>
