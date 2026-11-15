@@ -1,17 +1,53 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0770cd">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="KasirKu">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>KasirKu POS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <!-- SEO -->
+    <title>KasirKu POS - Aplikasi Kasir Digital</title>
+    <meta name="description" content="KasirKu POS adalah aplikasi kasir digital praktis untuk mengelola transaksi, produk, stok barang, dan laporan penjualan bisnis Anda.">
+    <meta name="keywords" content="KasirKu, aplikasi kasir, kasir digital, aplikasi POS, sistem kasir">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0770cd">
+    <link rel="canonical" href="https://kasirku.imagix.id/">
+
+    <!-- Open Graph / WhatsApp / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="KasirKu POS">
+    <meta property="og:title" content="KasirKu POS - Aplikasi Kasir Digital">
+    <meta property="og:description" content="Kelola transaksi, produk, stok barang, dan laporan penjualan dengan mudah menggunakan KasirKu POS.">
+    <meta property="og:url" content="https://kasirku.imagix.id/">
+    <meta property="og:image" content="https://kasirku.imagix.id/og-image.jpg">
+    <meta property="og:image:secure_url" content="https://kasirku.imagix.id/og-image.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="KasirKu POS - Aplikasi Kasir Digital">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KasirKu POS - Aplikasi Kasir Digital">
+    <meta name="twitter:description" content="Aplikasi kasir digital praktis untuk mengelola transaksi dan penjualan bisnis Anda.">
+    <meta name="twitter:image" content="https://kasirku.imagix.id/og-image.jpg">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <!-- Mobile App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="KasirKu">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <!-- HTMX: deklaratif AJAX dari HTML (hx-post, hx-on, dll) -->
+    <script src="https://unpkg.com/htmx.org@2.0.4" crossorigin="anonymous"></script>
+
+</head>
+
 <style>
 :root{--bg:#f2f6fa;--c:#fff;--l:#e3e9f0;--t:#112032;--m:#687787;--p:#0770cd;--pt:#e8f2fc;--or:#ff5e1f;--ok:#0f9d6b;--er:#d93b3b;--wa:#e8780a;--sh:0 2px 8px rgba(17,32,50,.06);--sh2:0 8px 24px rgba(17,32,50,.12)}
 [data-d]{--bg:#0b1118;--c:#131c26;--l:#243242;--t:#eaf1f8;--m:#8b9bab;--p:#3b95f0;--pt:#14263a;--or:#ff7a45;--sh:0 2px 8px rgba(0,0,0,.3);--sh2:0 8px 24px rgba(0,0,0,.5)}
@@ -99,6 +135,13 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 .seg button{border:0;background:0;padding:9px;border-radius:9px;font-weight:600;color:var(--m);cursor:pointer;transition:.15s}
 .seg button.on{background:var(--c);color:var(--t);box-shadow:var(--sh)}
 .lk{border:0;background:0;color:var(--m);font-size:13px;font-weight:600;cursor:pointer;padding:2px}.lk:hover{color:var(--p)}
+/* captcha */
+.capw{display:flex;gap:10px;align-items:stretch}
+#capCv{flex:none;width:130px;height:48px;border:1.5px solid var(--l);border-radius:12px;background:#f0f4f8;cursor:pointer;display:block}
+#capCv:active{transform:scale(.97)}
+.capw .i{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.08em;font-family:ui-monospace,Menlo,monospace}
+.caphint{font-size:11px;color:var(--m);margin-top:4px;display:flex;align-items:center;gap:6px}
+.capico{width:14px;height:14px;flex:none}
 </style>
 </head>
 <body>
@@ -110,7 +153,19 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
   <div id="atw" hidden class="col" style="gap:6px"><div class="lb" style="margin:0">Nama toko</div><input id="at" class="i" placeholder="mis. Toko Berkah" autocomplete="organization"></div>
   <div class="col" style="gap:6px"><div class="lb" style="margin:0">No. WhatsApp</div><input id="au" class="i" inputmode="tel" placeholder="0812-3456-7890" autocomplete="tel" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" onkeydown="if(event.key==='Enter')$('ap').focus()"></div>
   <div class="col" style="gap:6px"><div class="lb" style="margin:0">Sandi</div><div class="pww"><input id="ap" type="password" class="i" placeholder="Minimal 6 karakter" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false"><button type="button" class="eye" onclick="pwTg('ap',this)" title="Lihat sandi" aria-label="Lihat sandi"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
-  <button id="ab" class="b o" style="padding:14px" onclick="doAuth()">Masuk</button>
+  <!-- Captcha anti-spam: hanya tampil saat Daftar -->
+  <div id="capW" hidden class="col" style="gap:6px">
+    <div class="lb" style="margin:0">Verifikasi (anti-spam)</div>
+    <div class="capw">
+      <canvas id="capCv" width="260" height="96" title="Klik untuk refresh" onclick="genCaptcha()"></canvas>
+      <input id="capIn" class="i" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" placeholder="Ketik 5 huruf" maxlength="6">
+    </div>
+    <div class="caphint"><svg class="ic capico" viewBox="0 0 24 24"><path d="M3 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Klik gambar untuk ganti huruf. Huruf besar/kecil diabaikan.</span></div>
+  </div>
+  <!-- Form HTMX: hx-post ke API; body & response di-handle via event listener -->
+  <form id="authForm" hx-post="#" hx-trigger="submit" hx-swap="none">
+    <button id="ab" type="submit" class="b o" style="padding:14px;width:100%">Masuk</button>
+  </form>
   <button type="button" class="lk" onclick="forgot()">Lupa sandi?</button>
  </div>
 </div></div>
@@ -203,7 +258,10 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 </div></div></div>
 <div id="shf" class="sh" onclick="if(event.target===this)cs()"><div><div class="gr"></div><div class="r jb"><b style="font-size:18px">Lupa sandi</b><button class="g" onclick="cs()">Tutup</button></div>
 <div class="col" style="margin-top:12px">
- <div class="rknote"><span>🔒</span><span>Hanya <b>pemilik aplikasi</b> yang mengetahui <b>Kunci Pemilik</b> (disimpan rahasia di Apps Script, tidak di HP siapa pun). Dengan kunci itu, sandi akun mana pun bisa direset. <b>Kasir</b> yang lupa sandi: minta pemilik toko mereset lewat menu <b>Setelan → Akun kasir → Reset sandi</b>.</span></div>
+<div class="rknote">
+  <span>🔒</span>
+  <span>Lupa sandi atau membutuhkan Kunci Pemilik? Silakan hubungi admin untuk meminta kode bantuan.</span>
+</div>
  <div class="lb">No. WhatsApp akun</div><input id="fpw" class="i" inputmode="tel" placeholder="0812-3456-7890" autocomplete="off">
  <div class="lb">Kunci Pemilik</div>
  <div class="pww"><input id="fpk" type="password" class="i" placeholder="Kunci rahasia pemilik aplikasi" autocomplete="off"><button type="button" class="eye" onclick="pwTg('fpk',this)" title="Lihat kunci" aria-label="Lihat kunci"><svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
@@ -214,6 +272,25 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbyfIOB7mN7t4NeicBg-UU8DkgKFq8wLI38OsxNBRgikrcbDUg1gLdVBERDZnWPCrTnaZg/exec'; // URL Web App Apps Script (…/exec)
+// Set hx-post form auth ke URL API supaya HTMX 2.x pakai URL absolut cross-origin tanpa invalidPath.
+// HTMX 2.x punya config selfRequestsOnly (true = blokir cross-origin). Karena API Apps Script
+// beda origin dengan host aplikasi, kita matikan restriksi ini supaya request bisa keluar.
+(function () {
+  if (window.htmx) {
+    htmx.config.selfRequestsOnly = false;
+    const f = document.getElementById('authForm');
+    if (f) { f.setAttribute('hx-post', API); htmx.process(f); }
+  } else {
+    // HTMX belum loaded — retry setelah DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.htmx) {
+        htmx.config.selfRequestsOnly = false;
+        const f = document.getElementById('authForm');
+        if (f) { f.setAttribute('hx-post', API); htmx.process(f); }
+      }
+    });
+  }
+})();
 const $ = i => document.getElementById(i), R = n => 'Rp ' + Math.round(+n || 0).toLocaleString('id-ID');
 const E = s => String(s ?? '').replace(/[&<>"']/g, c => '&#' + c.charCodeAt(0) + ';');
 const L = (k, v) => { try { return v === undefined ? JSON.parse(localStorage.getItem(k)) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } };
@@ -273,6 +350,111 @@ const EYE_ON = '<svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.
 const EYE_OFF = '<svg class="ic" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 3.5l16.5 17"/></svg>';
 function pwTg(id, b) { const i = $(id), show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.innerHTML = show ? EYE_OFF : EYE_ON; b.title = show ? 'Sembunyikan sandi' : 'Lihat sandi'; i.focus(); try { i.setSelectionRange(i.value.length, i.value.length); } catch (e) { } }
 
+/* ===== Captcha anti-spam (canvas, client-side) ===== */
+let capAns = "";
+const CAPCHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // tanpa 0/O/1/I agar tidak ambigu
+function genCaptcha() {
+  const cv = $("capCv"); if (!cv) return;
+  capAns = ""; for (let i = 0; i < 5; i++) capAns += CAPCHARS[Math.floor(Math.random() * CAPCHARS.length)];
+  const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+  ctx.fillStyle = "#eef3f9"; ctx.fillRect(0, 0, W, H);
+  for (let i = 0; i < 7; i++) { ctx.strokeStyle = `hsla(${Math.random()*360},55%,60%,.7)`; ctx.lineWidth = 1 + Math.random()*1.5; ctx.beginPath(); ctx.moveTo(Math.random()*W, Math.random()*H); ctx.lineTo(Math.random()*W, Math.random()*H); ctx.stroke(); }
+  for (let i = 0; i < 40; i++) { ctx.fillStyle = `hsla(${Math.random()*360},60%,55%,.65)`; ctx.beginPath(); ctx.arc(Math.random()*W, Math.random()*H, 1.4, 0, Math.PI*2); ctx.fill(); }
+  for (let i = 0; i < capAns.length; i++) {
+    ctx.save();
+    const fs = 30 + Math.random()*6;
+    ctx.font = `bold ${fs}px ui-monospace,Menlo,monospace`;
+    ctx.fillStyle = `hsl(${Math.floor(Math.random()*360)},65%,32%)`;
+    const x = 12 + i * ((W - 24) / capAns.length);
+    const y = H/2 + fs/3 + (Math.random()*8 - 4);
+    ctx.translate(x, y); ctx.rotate((Math.random() - 0.5) * 0.5);
+    ctx.fillText(capAns[i], 0, 0);
+    ctx.restore();
+  }
+}
+function capValid() {
+  if (!S.reg) return true;
+  const v = ($("capIn").value || "").trim().toUpperCase();
+  if (v !== capAns) { toast("Captcha salah, coba lagi", 1); genCaptcha(); $("capIn").value = ""; $("capIn").focus(); return false; }
+  return true;
+}
+
+/* ===== HTMX handlers untuk auth ===== */
+// Form auth memakai HTMX deklaratif (hx-post, hx-trigger="submit").
+// Karena backend Apps Script expect raw JSON body (bukan FormData) dan HTMX 2.x
+// menambah header HX-Request/HX-Trigger yang memicu CORS preflight (Apps Script
+// tidak menangani OPTIONS), kita intercept di config-request: batal XHR HTMX,
+// lalu kirim via fetch() manual. htmx:afterRequest tetap jadi titik handle respons.
+let _authFetchAbort = null;
+function authHxConfig(ev) {
+  const d = ev.detail;
+  // Validasi; batal seluruhnya jika gagal
+  const w = normWa($("au").value);
+  if (!okWa(w)) { ev.preventDefault(); toast("No. WA tidak valid — pakai format 08, mis. 081234567890", 1); return; }
+  if (!$("ap").value) { ev.preventDefault(); toast("Sandi wajib diisi", 1); return; }
+  if (S.reg && !$("at").value.trim()) { ev.preventDefault(); toast("Nama toko wajib diisi", 1); return; }
+  if (S.reg && !capValid()) { ev.preventDefault(); return; }
+
+  // Batal request XHR HTMX (kita akan pakai fetch)
+  ev.preventDefault();
+
+  // feedback UI
+  const b = $("ab"); b.disabled = 1; b.dataset.lbl = b.textContent; b.textContent = "Memproses…";
+
+  // Kirim via fetch (sama persis dengan behaviour asli sebelum HTMX)
+  const body = JSON.stringify({ action: S.reg ? "register" : "login", no_wa: w, password: $("ap").value, toko: $("at").value, token: undefined });
+  if (_authFetchAbort) _authFetchAbort.abort();
+  const ctrl = new AbortController(); _authFetchAbort = ctrl;
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body,
+    signal: ctrl.signal
+  }).then(r => r.text().then(t => ({ ok: r.ok, text: t })))
+    .then(({ text }) => {
+      const fakeEv = { detail: { failed: false, xhr: { responseText: text, status: 200 }, requestConfig: { elt: $("authForm") }, elt: $("authForm") } };
+      authHxAfter(fakeEv);
+    })
+    .catch(e => {
+      if (e.name === "AbortError") return;
+      const fakeEv = { detail: { failed: true, xhr: null, requestConfig: { elt: $("authForm") }, elt: $("authForm") } };
+      authHxAfter(fakeEv);
+    });
+}
+function authHxAfter(ev) {
+  const xhr = ev.detail.xhr, b = $("ab");
+  b.disabled = 0; b.textContent = b.dataset.lbl || (S.reg ? "Buat toko" : "Masuk");
+  if (ev.detail.failed) { toast("Tidak ada koneksi ke server", 1); return; }
+  let j; try { j = JSON.parse(xhr.responseText); } catch (e) { toast("Respons bukan dari Apps Script. Pastikan akses deploy Anyone dan URL berakhiran /exec", 1); return; }
+  if (!j.ok) {
+    if (/Sesi habis/.test(j.error)) { showAuth(); toast("Sesi habis, silakan masuk lagi", 1); return; }
+    toast(j.error || "Gagal", 1);
+    if (S.reg) { genCaptcha(); $("capIn").value = ""; }
+    return;
+  }
+  const reg = S.reg;
+  L("lwa", normWa($("au").value)); S.tok = j.token; L("tok", j.token);
+  $("ap").value = ""; $("at").value = ""; $("capIn").value = "";
+  setD(j); flush();
+  if (reg) { swAuth(0); setTimeout(() => toast("Toko terdaftar! Atur Kunci Pemilik di Apps Script agar bisa reset sandi.", 2), 1200); }
+}
+
+// Daftarkan handler HTMX via addEventListener (lebih reliable dari hx-on untuk event berkoma).
+// htmx:config-request & htmx:afterRequest dibubble ke body, filter berdasarkan elt = #authForm.
+function hxAuthMatch(elt) { return elt && (elt.id === "authForm" || (elt.closest && elt.closest("#authForm"))); }
+document.addEventListener("htmx:config-request", (ev) => {
+  if (hxAuthMatch(ev.detail.elt)) authHxConfig(ev);
+});
+document.addEventListener("htmx:afterRequest", (ev) => {
+  if (hxAuthMatch(ev.detail.requestConfig.elt) || hxAuthMatch(ev.detail.elt)) authHxAfter(ev);
+});
+// HTMX 2.x memvalidasi path dan memblokir cross-origin absolute URL secara default.
+// Untuk URL API Apps Script (cross-origin HTTPS), izinkan via cancel invalidPath.
+// Lihat: https://htmx.org/migration-guide-htmx-1-8-to-2-0/
+document.addEventListener("htmx:invalidPath", (ev) => {
+  if (ev.detail.path && ev.detail.path === API) { ev.preventDefault(); ev.detail.cancel = true; }
+});
+
 /* ===== Auth ===== */
 function showAuth() {
   L('tok', null); L('d', null); S.tok = null;
@@ -287,30 +469,16 @@ function swAuth(r) {
   $('sg0').classList.toggle('on', !r);
   $('sg1').classList.toggle('on', !!r);
   $('atw').hidden = !r;
+  $('capW').hidden = !r;
   $('ab').textContent = r ? 'Buat toko' : 'Masuk';
   $('as').textContent = r ? 'Daftarkan toko baru' : 'Masuk ke toko Anda';
   $('ap').autocomplete = r ? 'new-password' : 'current-password';
+  if (r) { setTimeout(() => { genCaptcha(); $("capIn").value = ""; }, 30); }
 }
 
-function doAuth() {
-  const b = $('ab'); if (b.disabled) return;
-  b.disabled = 1; b.textContent = 'Memproses…';
-  run(async () => {
-    const w = normWa($('au').value);
-    if (!okWa(w)) return toast('No. WA tidak valid — pakai format 08, mis. 081234567890', 1);
-    if (!$('ap').value) return toast('Sandi wajib diisi', 1);
-    if (S.reg && !$('at').value.trim()) return toast('Nama toko wajib diisi', 1);
-    const reg = S.reg;
-    const j = await api(reg ? 'register' : 'login', { no_wa: w, password: $('ap').value, toko: $('at').value, token: undefined });
-    L('lwa', w); S.tok = j.token; L('tok', j.token);
-    $('ap').value = ''; $('at').value = '';
-    setD(j); flush();
-    if (reg) {
-      swAuth(0);
-      setTimeout(() => toast('Toko terdaftar! Atur "Kunci Pemilik" di Apps Script agar bisa reset sandi.', 2), 1200);
-    }
-  }).finally(() => { b.disabled = 0; b.textContent = S.reg ? 'Buat toko' : 'Masuk'; });
-}
+// doAuth sekarang hanya memicu submit form HTMX (hx-post).
+// Validasi (termasuk captcha) & pengubahan body JSON dilakukan di authHxConfig.
+function doAuth() { $("authForm").requestSubmit(); }
 
 function forgot() {
   const w = $('au').value; if (w && !$('fpw').value) $('fpw').value = w;
@@ -784,7 +952,7 @@ function th() { const z = document.documentElement; z.toggleAttribute('data-d', 
 function dark() { L('dk', !L('dk')); th(); }
 
 /* ===== Mulai: tampil seketika dari cache, sinkron di latar ===== */
-th(); $('ap').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+th(); $('ap').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAuth(); } }); $('capIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAuth(); } });
 ['au', 'fpw', 'tu'].forEach(id => $(id).addEventListener('blur', () => { const d = $(id).value.replace(/\D/g, ''); if (d) $(id).value = fWa(d); }));
 if (S.tok) { const c = L('d'); if (c) { try { setD(c); } catch (e) { } } if (API.startsWith('GANTI')) sbar('URL Web App belum diisi di index.html (variabel API)'); S.q.length ? flush() : pull(); if (!c) { api('data').then(setD).catch(showAuth); } } else showAuth();
 </script>
