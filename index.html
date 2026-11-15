@@ -229,6 +229,12 @@ main{padding:18px 18px 40px;max-width:1200px;margin:auto}
     <div class="r w"><input id="qf" type="file" accept="image/*" class="i f"><button id="qb2" class="b" onclick="upQ()">Upload QRIS</button><button class="g" onclick="delQ()">Hapus</button></div>
     <input id="sf" class="i" placeholder="Teks bawah struk"><button class="b" onclick="saveSet()">Simpan pengaturan</button></div>
    <div class="c col"><b>Tampilan &amp; notifikasi</b><div class="r w"><button class="g" onclick="dark()">Terang / Gelap</button><button class="g" onclick="enN()">Notifikasi stok</button><button class="g" onclick="tgp()">Auto-cetak struk: <span id="apl"></span></button><input type="color" id="ac" onchange="L('ac2',this.value);th()"></div></div>
+   <div class="c col own"><b>Ekspor ke Google Sheets</b>
+    <p class="s m">Cadangkan <b>semua data</b> — transaksi, produk &amp; stok, pengeluaran, akun, dan ringkasan omzet — ke satu spreadsheet Google Sheets. Setiap ekspor memperbarui spreadsheet yang sama, bukan membuat file baru.</p>
+    <div id="exst" class="s"></div>
+    <div class="r w"><button id="exb" class="b f" style="text-align:center;white-space:nowrap" onclick="expSheet()">Ekspor semua data</button><button id="exo" class="g f" style="display:none;text-align:center" onclick="exOpen()">Buka Spreadsheet</button></div>
+    <div class="rknote"><span>ℹ</span><span>Ekspor pertama membuat spreadsheet <b>KasirKu — [nama toko]</b> di Google Drive pemilik (sesuai akun Apps Script); ekspor berikutnya memperbaruinya. Perlu koneksi internet dan dapat memakan waktu beberapa detik.</span></div>
+   </div>
    <div class="c col"><b>Ganti sandi</b><div class="r w"><input id="c0" type="password" class="i f" placeholder="Sandi lama"><input id="c1" type="password" class="i f" placeholder="Sandi baru"><button class="b" onclick="chPass()">Ganti</button></div></div>
    <div class="c col own"><b>Akun kasir</b>
     <div class="rknote"><span>ℹ</span><span>Kasir masuk dengan <b>No. WhatsApp</b> mereka. Jika kasir lupa sandi, tekan <b>Reset sandi</b> — pemilik tidak perlu tahu sandi lamanya.</span></div>
@@ -1217,5 +1223,139 @@ html,body{max-width:100%;overflow-x:hidden}
  #capCv{width:100px}
 }
 </style>
+<style>
+/* ================================================================
+   LAYER 3 — Polesan tampilan mobile: rapi, pas, profesional
+   (tidak mengubah perilaku fungsional yang ada)
+   ================================================================ */
+html{-webkit-text-size-adjust:100%}
+body{font-variant-numeric:tabular-nums;text-rendering:optimizeLegibility}
+:focus-visible{outline:2px solid var(--p);outline-offset:2px;border-radius:6px}
+#fab.hide{display:none!important}
+.bars::-webkit-scrollbar{display:none}
+.c>b:first-child{font-size:15.5px;letter-spacing:-.01em}
+.b:disabled{opacity:.55;cursor:default}
+.g{transition:border-color .15s,background .15s,color .15s}
+.chip{transition:background .15s,color .15s,border-color .15s}
+#exst{line-height:1.5}
+
+@media(max-width:900px){
+ /* Header lebih ringan */
+ header{padding-bottom:10px}
+ #uu{font-size:11px;opacity:.72;margin-top:1px}
+
+ /* Navigasi bawah: lebih tenang, efek tekan halus, blur modern */
+ #nav{padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--c) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+ #nav button{min-height:50px;border-radius:12px;transition:background .18s,color .18s,transform .08s}
+ #nav button:active{transform:scale(.93)}
+ #nav button .ic{width:21px;height:21px}
+
+ /* Tombol & input seragam: tinggi sentuh nyaman */
+ .i{min-height:48px}
+ .b{min-height:48px;font-size:15px}
+
+ /* FAB keranjang: lebih tegas & profesional, hilang saat keranjang kosong */
+ #fab{bottom:calc(82px + env(safe-area-inset-bottom));padding:13px 18px;border-radius:16px;background:linear-gradient(135deg,#ff7a3d,#ff5e1f);box-shadow:0 12px 28px rgba(255,94,31,.42),0 2px 8px rgba(0,0,0,.14);gap:12px}
+ #fab:active{transform:scale(.97)}
+ #fn{font-size:12.5px;font-weight:600;opacity:.92}
+ #fs{font-size:16px;font-weight:800}
+
+ /* Kartu produk di kasir: tipografi lebih tegas */
+ .pc{border-radius:16px}
+ .pc div.k:nth-of-type(1){font-size:14px;font-weight:600}
+ .pc div.k:nth-of-type(2){font-size:14.5px}
+ .pc .s{font-size:11px}
+
+ /* Drawer keranjang (fullscreen): bersih tanpa bayangan, aman bawah */
+ #cp{border:0;border-radius:0;box-shadow:none;background:var(--c);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+ #cp>.r.jb:first-child{border-bottom:1px solid var(--l);padding-bottom:10px}
+
+ /* Bottom sheet: gulir tertahan agar tidak menyeret halaman */
+ .sh>div{overscroll-behavior:contain}
+
+ /* Toast lebih profesional */
+ #toast{border-radius:14px;box-shadow:0 12px 32px rgba(8,20,35,.28)}
+
+ /* Angka KPI seragam */
+ .kpi .c b{font-size:18px}
+
+ /* Grafik harian: scrollbar hilang */
+ .bars{scrollbar-width:none}
+
+ /* Halaman login */
+
+ /* Kartu Setelan: baris tombol tidak sesak, teks terpotong rapi */
+ #v-set .r.w>.g{flex:1 1 160px;overflow:hidden;text-overflow:ellipsis}
+ #v-set .r.w>button[onclick="tgp()"]{flex:1 1 100%}
+ #v-set .r.w>input[type=color]{flex:none;width:48px;height:40px;margin-left:auto;border:1.5px solid var(--l);border-radius:10px;padding:2px;background:var(--c)}
+ .ac{border-radius:22px}
+ .seg button{min-height:44px}
+}
+
+/* layar sangat kecil (<=360px) */
+@media(max-width:360px){
+ #nav button{font-size:9.5px}
+ #fab{padding:12px 14px}
+ #fs{font-size:15px}
+}
+</style>
+<script>
+/* ================================================================
+   EKSPOR KE GOOGLE SHEETS (owner) + polesan kecil keranjang
+   ================================================================ */
+
+/* FAB keranjang hilang saat kosong, muncul begitu ada item */
+function fabHide() { if (!$('fab')) return; const n = Object.keys(S.cart || {}).filter(id => (((D() || {}).produk) || []).some(p => p.id === id)).length; $('fab').classList.toggle('hide', !n); }
+deco('cartUI', fabHide); try { if (S.d) fabHide(); } catch (e) { }
+
+/* ===== Status ekspor terakhir (tampil di kartu Setelan) ===== */
+function exUI() {
+  const u = L('shUrl'), t = L('shAt'), s = $('exst'); if (!s) return; const o = $('exo'); if (o) o.style.display = u ? '' : 'none';
+  s.innerHTML = u ? '<span class="bd">Terakhir diekspor: ' + E(t || '-') + '</span>' : '<span class="m">Belum pernah diekspor. Spreadsheet dibuat otomatis pada ekspor pertama.</span>';
+}
+function exOpen() { const u = L('shUrl'); if (u) open(u, '_blank'); else toast('Belum ada spreadsheet — jalankan ekspor dulu', 1); }
+
+/* ===== Ekspor: kirim semua data ke backend, ditulis ke Google Sheets ===== */
+async function expSheet() {
+  if (!own()) return toast('Hanya owner yang dapat mengekspor data', 1);
+  if (!confirm('Kirim semua data ke Google Sheets?\n\n- Transaksi, produk & stok, pengeluaran, akun, ringkasan\n- Spreadsheet yang sama akan diperbarui')) return;
+  const b = $('exb'); b.disabled = 1; b.dataset.l = b.textContent; b.textContent = 'Mengekspor…';
+  try {
+    const d = D(), s = st(), pk = t => +(t.c || {}).pjk || 0;
+    const J = d.tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL'), K = d.tx.filter(t => t.status !== 'VOID' && t.tipe === 'KELUAR');
+    const om = J.reduce((a, t) => a + t.total - pk(t), 0), hpp = J.reduce((a, t) => a + t.it.reduce((x, i) => x + i.qty * (i.modal || 0), 0), 0), kl = K.reduce((a, t) => a + t.total, 0);
+    const hut = d.tx.filter(t => t.status !== 'VOID' && t.tipe === 'JUAL' && t.metode === 'Hutang' && t.total > t.bayar).reduce((a, t) => a + t.total - t.bayar, 0);
+    const mt = {}; J.forEach(t => { const m = mlabel(t); mt[m] = (mt[m] || 0) + t.total; });
+    const now = new Date().toLocaleString('id-ID');
+    const data = {
+      toko: s.nama || d.toko || 'Toko', waktu: now,
+      ringkasan: [
+        ['Nama toko', s.nama || d.toko || ''], ['Alamat', s.alamat || ''], ['Telepon', s.telp || ''],
+        ['Waktu ekspor', now], ['Jumlah produk', d.produk.length], ['Jumlah transaksi penjualan (non-batal)', J.length],
+        ['Total omzet (semua waktu)', om], ['Total modal terjual (HPP)', hpp], ['Laba kotor', om - hpp],
+        ['Total pengeluaran', kl], ['Laba bersih', om - hpp - kl], ['Total piutang belum lunas', hut],
+        ['Nilai stok (harga jual)', d.produk.reduce((a, p) => a + p.harga * p.stok, 0)],
+        ['Nilai stok (harga modal)', d.produk.reduce((a, p) => a + (p.modal || 0) * p.stok, 0)]
+      ].concat(Object.entries(mt).sort((a, b) => b[1] - a[1]).map(e => ['Omzet metode: ' + e[0], e[1]])),
+      transaksi: [['Waktu', 'ID', 'Tipe', 'Metode', 'Pelanggan', 'Kasir', 'Subtotal', 'Diskon', 'Pajak', 'Total', 'Dibayar', 'Sisa', 'Status', 'Rincian item', 'Catatan']].concat(d.tx.map(t => {
+        const c = t.c || {}, j = t.tipe === 'JUAL';
+        return [t.tgl, t.id, j ? 'Penjualan' : 'Pengeluaran', mlabel(t), t.pelanggan || '', fWa(t.kasir),
+          +(c.sub ?? t.total) || 0, +(c.dis || 0), +(c.pjk || 0), +t.total || 0, +t.bayar || 0,
+          (j && t.metode === 'Hutang') ? (t.total - t.bayar) : 0, t.status || 'OK',
+          j ? t.it.map(i => i.qty + 'x ' + i.nama).join('; ') : '', j ? '' : String(t.catatan || '')];
+      })),
+      produk: [['Nama', 'Kategori', 'Kode', 'Harga jual', 'Harga modal', 'Margin', 'Stok', 'Nilai stok (modal)']].concat(d.produk.map(p => [p.nama, p.kategori || 'Umum', p.kode || '', +p.harga || 0, +p.modal || 0, (+p.harga || 0) - (+p.modal || 0), +p.stok || 0, (+p.modal || 0) * (+p.stok || 0)])),
+      pengeluaran: [['Waktu', 'ID', 'Keterangan', 'Jumlah', 'Kasir', 'Status']].concat(K.map(t => [t.tgl, t.id, String(t.catatan || ''), +t.total || 0, fWa(t.kasir), t.status || 'OK'])),
+      pengguna: [['No. WhatsApp', 'Peran']].concat((d.users || []).map(u => [fWa(u.wa), u.role === 'owner' ? 'Owner' : 'Kasir']))
+    };
+    const j = await api('exportSheet', { data });
+    L('shUrl', j.url); L('shAt', now); exUI();
+    toast('Ekspor berhasil: ' + (j.nama || 'spreadsheet') + ' siap dibuka');
+  } catch (e) { toast(e.message, 1); }
+  finally { b.disabled = 0; b.textContent = b.dataset.l || 'Ekspor semua data'; }
+}
+try { exUI(); } catch (e) { }
+</script>
+
 </body>
 </html>
